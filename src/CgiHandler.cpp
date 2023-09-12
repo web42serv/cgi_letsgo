@@ -23,12 +23,18 @@ void CgiHandler::generateProcess(const Request &request)
     argv.push_back(0);
     if (pid == 0)
     {
-        close(fd[1]);
-        dup2(fd[0], STDOUT_FILENO);
+        close(fd[0]);
+        dup2(fd[1], STDOUT_FILENO);
         fillEnv(request);
         convertEnv();
         execve(argv[0], &argv[0], &envp[0]);
+        throw std::runtime_error("cgi execute error");
     }
+    else
+    {
+        close(fd[1]);
+    }
+    close(fd[0]);
 }
 
 void CgiHandler::fillEnv(const Request &request)
