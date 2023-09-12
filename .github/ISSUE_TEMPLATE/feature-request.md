@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: 기능 개발 요청
-title: "\U0001F680 [Feature] - "
+title: "✨ [Feat] - "
 labels: ''
 assignees: ''
 
