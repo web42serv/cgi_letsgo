@@ -8,48 +8,58 @@ void CgiHandler::generateProcess(const Request &request)
 {
     int fd[2];
 
-    if (pipe(fd) < 0)
-        throw std::runtime_error("pipe failed");
+    this->cgi_path = "./html" + request.getPath();
+
+	std::cout << this->cgi_path.c_str() << std::endl;
+
+	if (access(this->cgi_path.c_str(), F_OK) != 0)
+		throw std::runtime_error("404 not found");
+
+	if (pipe(fd) < 0)
+			throw std::runtime_error("pipe failed");
+
+	int read_fd = dup(0);
 
     pid_t pid = fork();
     if (pid == -1)
         throw std::runtime_error("fork failed");
-
-    std::string cgi_path = "./html" + request.getPath();
-
-    // 유효하지 않은 path는 404 던지기
-
-    argv.push_back(const_cast<char*>(cgi_path.c_str()));
-    argv.push_back(0);
-    if (pid == 0)
+    else if (pid == 0)
     {
-        close(fd[1]);
-        dup2(fd[0], STDOUT_FILENO);
+        close(fd[0]);
+        dup2(fd[1], STDOUT_FILENO);
         fillEnv(request);
-//        execve(argv[0], &argv[0], envp);
+        execve(this->cgi_path.c_str(), NULL, &env_vec[0]);
+        throw std::runtime_error("cgi execute failed");
     }
+	else
+	{
+		close(fd[1]);
+		dup2(fd[0], STDIN_FILENO);
+		char buff[128];
+		read(fd[0], &buff, 128);
+		std::cout << buff << std::endl;
+		dup2(STDIN_FILENO, read_fd);
+		close(fd[0]);
+	}
+
 }
 
 void CgiHandler::fillEnv(const Request &request)
 {
-    env["AUTH_TYPE"] = "";
-    env["CONTENT_LENGTH"] = "";
-    env["CONTENT_TYPE"] = "";
-    env["GATEWAY_INTERFACE"] = "";
-    env["PATH_INFO"] = "";
-    env["PATH_TRANSLATED"] = "";
-    env["QUERY_STRING"] = "";
-    env["REMOTE_ADDR"] = "";
-    env["REMOTE_HOST"] = "";
-    env["REMOTE_IDENT"] = "";
-    env["REMOTE_USER"] = "";
+    env["CONTENT_LENGTH"] = "1000";
+    env["CONTENT_TYPE"] = "text/plain";
+    env["PATH_INFO"] = this->cgi_path;
+    env["QUERY_STRING"] = "name=subcho";
     env["REQUEST_METHOD"] = request.getHttpMethodString();
-    env["REQUEST_URI"] = "";
-    env["SCRIPT_FILENAME"] = "";
-    env["SCRIPT_NAME"] = "";
-    env["SERVER_NAME"] = "";
-    env["SERVER_PROTOCOL"] = "";
-    env["SERVER_SOFTWARE"] = "";
+	env["SERVER_PROTOCOL"] = "HTTP/1.1";
+
+	std::map<std::string, std::string>::iterator it;
+	for(it = this->env.begin(); it != this->env.end(); ++it)
+	{
+		std::string env_str = it->first + "=" + it->second;
+		this->env_vec.push_back(const_cast<char*> (env_str.c_str()));
+	}
+	this->env_vec.push_back(0);
 }
 
 void CgiHandler::executeCgi(const Request &request)
@@ -57,7 +67,7 @@ void CgiHandler::executeCgi(const Request &request)
     try
     {
         generateProcess(request);
-        sendCgiResult();
+        //sendCgiResult();
     }
     catch (std::runtime_error &e)
     {
@@ -66,7 +76,7 @@ void CgiHandler::executeCgi(const Request &request)
     }
 }
 
-void CgiHandler::sendCgiResult()
-{
+// void CgiHandler::sendCgiResult()
+// {
 
-}
+// }

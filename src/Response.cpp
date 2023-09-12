@@ -127,11 +127,18 @@ void Response::generateBody_AutoIndexing(const std::string &path, const Request 
 
 void Response::parsingFromRequest(Worker &worker, const Request &request)
 {
-//    if (request.getPath().find("cgi") != std::string::npos)
-//    {
-//        CgiHandler cgi;
-//        cgi.executeCgi(request);
-//    }
+   if (request.getPath().find("cgi") != std::string::npos)
+   {
+		CgiHandler cgi;
+		cgi.executeCgi(request);
+		this->statusCode = OK;
+		this->connection = "keep-alive";
+		this->contentType = "text/html";
+		this->httpVersion = "1.1";
+		this->location = "";
+		this->body = "cgi success";
+		return ;
+   }
 
     HttpMethod method = request.getHttpMethod();
 
