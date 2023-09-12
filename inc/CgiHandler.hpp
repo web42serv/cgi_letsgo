@@ -11,7 +11,6 @@
 
 class CgiHandler {
 private:
-    std::vector<char*> argv;
     std::vector<char*> envp;
     std::map<std::string, std::string> env;
 
