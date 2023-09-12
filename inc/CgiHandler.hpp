@@ -12,7 +12,7 @@
 class CgiHandler {
 private:
     std::vector<char*> argv;
-    char* envp[18];
+    std::vector<char*> envp;
     std::map<std::string, std::string> env;
 
 public:

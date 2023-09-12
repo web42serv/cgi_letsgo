@@ -27,7 +27,7 @@ void CgiHandler::generateProcess(const Request &request)
         dup2(fd[0], STDOUT_FILENO);
         fillEnv(request);
         convertEnv();
-        execve(argv[0], &argv[0], envp);
+        execve(argv[0], &argv[0], &envp[0]);
     }
 }
 
@@ -55,13 +55,12 @@ void CgiHandler::fillEnv(const Request &request)
 
 void CgiHandler::convertEnv()
 {
-    int idx = 0;
     for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); it++)
     {
         std::string concat = it->first + "=" + it->second;
-        envp[idx] = const_cast<char*>(concat.c_str());
-        idx++;
+        envp.push_back(const_cast<char*>(concat.c_str()));
     }
+    envp.push_back(0);
 }
 
 void CgiHandler::executeCgi(const Request &request)
