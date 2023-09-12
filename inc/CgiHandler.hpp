@@ -12,6 +12,7 @@
 class CgiHandler {
 private:
     std::vector<char*> argv;
+    std::vector<char*> envp;
     std::map<std::string, std::string> env;
 
 public:
@@ -20,6 +21,7 @@ public:
 
     void generateProcess(const Request &request);
     void fillEnv(const Request &request);
+    void convertEnv();
     void executeCgi(const Request &request);
     void sendCgiResult();
 };

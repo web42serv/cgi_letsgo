@@ -18,6 +18,7 @@ SRCS		:=	$(SRCDIR)/main.cpp\
 				$(SRCDIR)/Location.cpp\
 				$(SRCDIR)/LocationLexer.cpp\
 				$(SRCDIR)/WorkerLexer.cpp\
+				$(SRCDIR)/CgiHandler.cpp\
 
 OBJS		:=	$(SRCS:.cpp=.o)
 

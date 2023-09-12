@@ -127,11 +127,11 @@ void Response::generateBody_AutoIndexing(const std::string &path, const Request 
 
 void Response::parsingFromRequest(Worker &worker, const Request &request)
 {
-//    if (request.getPath().find("cgi") != std::string::npos)
-//    {
-//        CgiHandler cgi;
-//        cgi.executeCgi(request);
-//    }
+    if (request.getPath().find("cgi") != std::string::npos)
+    {
+        CgiHandler cgi;
+        cgi.executeCgi(request);
+    }
 
     HttpMethod method = request.getHttpMethod();
 
