@@ -26,7 +26,8 @@ void CgiHandler::generateProcess(const Request &request)
         close(fd[1]);
         dup2(fd[0], STDOUT_FILENO);
         fillEnv(request);
-//        execve(argv[0], &argv[0], envp);
+        convertEnv();
+        execve(argv[0], &argv[0], envp);
     }
 }
 
@@ -50,6 +51,17 @@ void CgiHandler::fillEnv(const Request &request)
     env["SERVER_NAME"] = "";
     env["SERVER_PROTOCOL"] = "";
     env["SERVER_SOFTWARE"] = "";
+}
+
+void CgiHandler::convertEnv()
+{
+    int idx = 0;
+    for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); it++)
+    {
+        std::string concat = it->first + "=" + it->second;
+        envp[idx] = const_cast<char*>(concat.c_str());
+        idx++;
+    }
 }
 
 void CgiHandler::executeCgi(const Request &request)
