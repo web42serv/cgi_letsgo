@@ -127,11 +127,18 @@ void Response::generateBody_AutoIndexing(const std::string &path, const Request 
 
 void Response::parsingFromRequest(Worker &worker, const Request &request)
 {
-    if (request.getPath().find("cgi") != std::string::npos)
-    {
-        CgiHandler cgi;
-        cgi.executeCgi(request);
-    }
+   if (request.getPath().find("cgi") != std::string::npos)
+   {
+       CgiHandler cgi;
+       this->statusCode = OK;
+       this->connection = "keep-alive";
+       this->contentType = "text/html";
+       this->httpVersion = "1.1";
+       this->location = "";
+//       this->body = "hello";
+       this->body = cgi.executeCgi(request);
+       return ;
+   }
 
     HttpMethod method = request.getHttpMethod();
 
@@ -209,6 +216,11 @@ void Response::handleBodySizeLimit()
     this->contentLength = this->body.size();
     this->contentType = "text/html";
 }
+
+void Response::setBody(const std::string body) {
+    this->body = body;
+}
+
 
 void Response::handleGET(Worker &worker, const Request &request)
 {
