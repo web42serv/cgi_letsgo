@@ -69,7 +69,7 @@ void CgiHandler::convertEnv()
   envp.push_back(0);
 }
 
-void CgiHandler::executeCgi(const Request &request)
+std::string CgiHandler::executeCgi(const Request &request)
 {
   try
   {
