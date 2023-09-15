@@ -12,7 +12,7 @@ import cgi
 # Start the HTML content
 print("<html>")
 print("<head><title>Simple CGI Example</title></head>")
-print("<body>")
+print("<body> hihi")
 
 # Get data from the form if it exists
 # form = cgi.FieldStorage()

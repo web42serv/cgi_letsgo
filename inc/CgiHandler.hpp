@@ -19,9 +19,9 @@ public:
     CgiHandler();
     ~CgiHandler();
 
-    void generateProcess(const Request &request);
+    std::string generateProcess(const Request &request);
     void fillEnv(const Request &request);
-    void executeCgi(const Request &request);
+    std::string executeCgi(const Request &request);
     //void sendCgiResult();
 };
 

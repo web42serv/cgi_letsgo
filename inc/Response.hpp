@@ -33,6 +33,7 @@ public:
 	void parsingFromRequest(Worker &worker, const Request &request);
 	void send(int fd);
     void handleBodySizeLimit();
+    void setBody(const std::string body);
 
     void handleGET(Worker &worker, const Request &request);
     void handlePOST(Worker &worker, const Request &request);

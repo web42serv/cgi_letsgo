@@ -4,7 +4,7 @@ CgiHandler::CgiHandler() {}
 
 CgiHandler::~CgiHandler() {}
 
-void CgiHandler::generateProcess(const Request &request)
+std::string CgiHandler::generateProcess(const Request &request)
 {
     int fd[2];
 
@@ -35,13 +35,16 @@ void CgiHandler::generateProcess(const Request &request)
 	{
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
-		char buff[128];
-		read(fd[0], &buff, 128);
+		char buff[1024];
+		read(fd[0], &buff, 1024);
+        std::string body(buff);
 		std::cout << buff << std::endl;
 		dup2(STDIN_FILENO, read_fd);
 		close(fd[0]);
+        return body;
 	}
 
+    return "generate process";
 }
 
 void CgiHandler::fillEnv(const Request &request)
@@ -62,17 +65,17 @@ void CgiHandler::fillEnv(const Request &request)
 	this->env_vec.push_back(0);
 }
 
-void CgiHandler::executeCgi(const Request &request)
+std::string CgiHandler::executeCgi(const Request &request)
 {
     try
     {
-        generateProcess(request);
+        return generateProcess(request);
         //sendCgiResult();
     }
     catch (std::runtime_error &e)
     {
         std::cout << e.what() << std::endl;
-        return;
+        return "execute cgi error";
     }
 }
 
