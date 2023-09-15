@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import cgi
+# import cgi
 
 print("<html>")
 print("<head><title>Simple CGI Example</title></head>")

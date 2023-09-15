@@ -4,7 +4,7 @@
 # from __future__ import print_function
 
 # Import the CGI module
-import cgi
+# import cgi
 
 # Print the Content-Type header
 # print("Content-Type: text/html\n")
