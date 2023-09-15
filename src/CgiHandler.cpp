@@ -36,6 +36,7 @@ std::string CgiHandler::generateProcess(const Request &request)
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
 		char buff[1024];
+        for(int i=0; i<1024; i++) buff[i] = '\0';
 		read(fd[0], &buff, 1024);
         std::string body(buff);
 		std::cout << buff << std::endl;
