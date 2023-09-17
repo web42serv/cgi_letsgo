@@ -21,7 +21,7 @@ public:
     ~CgiHandler();
 
     std::string generateProcess(const Request &request);
-    void fillEnv(const Request &request);
+    void fillEnv(const Request &request, std::string query_string);
     void convertEnv();
     std::string executeCgi(const Request &request);
     //void sendCgiResult();
