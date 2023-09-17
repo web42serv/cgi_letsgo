@@ -67,7 +67,9 @@ void CgiHandler::convertEnv()
   for (std::map<std::string, std::string>::iterator it = env.begin(); it != env.end(); it++)
   {
     std::string concat = it->first + "=" + it->second;
-    envp.push_back(const_cast<char*>(concat.c_str()));
+	char *str = new char[concat.length() + 1];
+	strcpy(str, concat.c_str());
+    envp.push_back(str);
   }
  	envp.push_back(0);
 	// 끝나고 envp 돌면서 delete 해주기 (+ 구조 바꿀 생각도...)
