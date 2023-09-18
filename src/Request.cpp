@@ -1,4 +1,5 @@
 #include "../inc/Request.hpp"
+#include "iostream"
 
 Request::Request()
 {
@@ -32,6 +33,20 @@ void Request::parsingFromData(std::string data)
     std::string method;
     stream >> method;
     stream >> this->path;
+
+	std::string s;
+	while (stream >> s)
+	{
+		if (s == "Content-Length:")
+			stream >> this->contentLength;
+		if (s == "Content-Type:")
+			stream >> this->contentType;
+	}
+
+	size_t bodyStart = data.find("\r\n\r\n") + 4; // 빈 줄 다음부터 본문
+    this->body = data.substr(bodyStart, this->contentLength);
+
+
     this->host = "localhost:8080";
     if (method == "GET")
         this->httpMethod = GET;
@@ -51,6 +66,21 @@ std::string Request::getHost() const
 Transaction::HttpMethod Request::getHttpMethod() const
 {
     return this->httpMethod;
+}
+
+std::string Request::getContentType() const
+{
+	return this->contentType;
+}
+
+std::string Request::getBody() const
+{
+	return this->body;
+}
+
+int	Request::getContentLength() const
+{
+	return this->contentLength;
 }
 
 std::string Request::getHttpMethodString() const
