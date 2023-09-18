@@ -18,7 +18,10 @@ public:
 
     void setPath(const std::string &path);
     std::string getPath() const;
+	std::string getBody() const;
     std::string getHost() const;
+	std::string getContentType() const;
+	int	getContentLength() const;
     HttpMethod getHttpMethod() const;
     std::string getHttpMethodString() const;
     void parsingFromData(std::string data);

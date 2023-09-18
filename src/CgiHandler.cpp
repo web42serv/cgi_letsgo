@@ -24,36 +24,40 @@ std::string CgiHandler::generateProcess(const Request &request)
 	int read_fd = dup(0);
 
   pid_t pid = fork();
-  if (pid == -1)
-    throw std::runtime_error("fork failed");
-  else if (pid == 0)
-  {
-    close(fd[0]);
-    dup2(fd[1], STDOUT_FILENO);
-    fillEnv(request, query_string);
-    execve(this->cgi_path.c_str(), NULL, &(envp[0]));
-    throw std::runtime_error("cgi execute failed");
-  }
+  	if (pid == -1)
+   	 throw std::runtime_error("fork failed");
+  	else if (pid == 0)
+ 	{
+		close(fd[0]);
+		dup2(fd[1], STDOUT_FILENO);
+		fillEnv(request, query_string);
+		if (request.getHttpMethodString() == "POST")
+            write(STDOUT_FILENO, request.getBody().c_str(), request.getBody().length());
+		execve(this->cgi_path.c_str(), NULL, &(envp[0]));
+		throw std::runtime_error("cgi execute failed");
+ 	}
 	else
 	{
 		close(fd[1]);
 		dup2(fd[0], STDIN_FILENO);
+		
 		char buff[1024];
-    for(int i=0; i<1024; i++) buff[i] = '\0';
-		read(fd[0], &buff, 1024);
-    std::string body(buff);
+		
+		for(int i=0; i<1024; i++) buff[i] = '\0';
+			read(fd[0], &buff, 1024);
+		std::string body(buff);
 		std::cout << buff << std::endl;
 		dup2(STDIN_FILENO, read_fd);
 		close(fd[0]);
-      return body;
+		return body;
 	}
   return "generate process";
 }
 
 void CgiHandler::fillEnv(const Request &request, std::string query_string)
 {
-	env["CONTENT_LENGTH"] = "1000";
-	env["CONTENT_TYPE"] = "multipart/form-data";
+	env["CONTENT_LENGTH"] = request.getContentLength();
+	env["CONTENT_TYPE"] = request.getContentType();
 	env["PATH_INFO"] = this->cgi_path;
 	env["QUERY_STRING"] = query_string;
 	env["REQUEST_METHOD"] = request.getHttpMethodString();
