@@ -66,7 +66,10 @@ void Webserv::run()
 		struct kevent events[32];
 		int triggered = kevent(this->kque, NULL, 0, events, 32, NULL);
 		if (triggered == -1)
-			throw std::runtime_error("kevent event error");
+        {
+            std::cerr << strerror(errno) << std::endl;
+            throw std::runtime_error("kevent event error");
+        }
 		for (int i = 0; i < triggered; i++)
 		{
 			bool flag = false;

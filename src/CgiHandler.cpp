@@ -40,7 +40,6 @@ std::string CgiHandler::generateProcess(const Request &request)
     close(from_cgi[1]);
 
     fillEnv(request, query_string);
-
     if (request.getHttpMethodString() == "POST")
     {
       // Read POST data from parent process through stdin
@@ -48,13 +47,13 @@ std::string CgiHandler::generateProcess(const Request &request)
       ssize_t bytesRead;
       while ((bytesRead = read(to_cgi[1], buffer, sizeof(buffer))) > 0)
       {
-	  	std::cerr << to_cgi[0] << std::endl;
         // Process POST data as needed
 		write(to_cgi[1], buffer, bytesRead);
       }
 	  close(to_cgi[1]);
     }
     execve(this->cgi_path.c_str(), NULL, envp.data());
+    std::cerr << strerror(errno) << std::endl;
     throw std::runtime_error("cgi execute failed");
   }
   else
@@ -88,7 +87,7 @@ std::string CgiHandler::generateProcess(const Request &request)
 
 void CgiHandler::fillEnv(const Request &request, std::string query_string)
 {
-	env["CONTENT_LENGTH"] = "1000";
+	env["CONTENT_LENGTH"] = "1000000000";
 	env["CONTENT_TYPE"] = request.getContentType();
 	env["PATH_INFO"] = this->cgi_path;
 	if (request.getHttpMethodString() == "GET")
@@ -121,7 +120,7 @@ std::string CgiHandler::executeCgi(const Request &request)
   }
   catch (std::runtime_error &e)
   {
-    std::cout << e.what() << std::endl;
+    std::cerr << e.what() << std::endl;
     return "execute cgi error";
   }
 }

@@ -130,7 +130,7 @@ void Response::parsingFromRequest(Worker &worker, const Request &request)
    if (request.getPath().find("cgi") != std::string::npos)
    {
        CgiHandler cgi;
-       this->statusCode = OK;
+       this->statusCode = CREATED;
        this->connection = "keep-alive";
        this->contentType = "text/html";
        this->httpVersion = "1.1";
