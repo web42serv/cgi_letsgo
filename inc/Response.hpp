@@ -40,6 +40,8 @@ public:
     void handlePUT(Worker &worker, const Request &request);
     void handleDELETE(Worker &worker, const Request &request);
 
+	std::string deleteCheck(std::string path);
+
 };
 
 #endif

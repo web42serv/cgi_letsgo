@@ -243,4 +243,33 @@ void Response::handlePOST(Worker &worker, const Request &request) {}
 
 void Response::handlePUT(Worker &worker, const Request &request) {}
 
-void Response::handleDELETE(Worker &worker, const Request &request) {}
+void Response::handleDELETE(Worker &worker, const Request &request) {
+    this->statusCode = OK;
+    this->connection = "keep-alive";
+    this->contentType = "text/html";
+    this->httpVersion = "1.1";
+    this->location = "";
+
+	std::string path = "./html" + request.getPath();
+	try
+	{
+		this->body = deleteCheck(path);
+	}
+    catch (std::runtime_error &e)
+    {
+        std::cout << e.what() << std::endl;
+    	return ;
+    }
+}
+
+std::string Response::deleteCheck(std::string path)
+{
+	if (access(path.c_str(), F_OK) == 0)
+	{
+		if (unlink(path.c_str()) == 0)
+			return path + " deleted\n";
+		throw std::runtime_error("unlink error");
+	}
+	else
+		throw std::runtime_error("404 not found");
+}
