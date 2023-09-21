@@ -258,6 +258,8 @@ void Response::handleDELETE(Worker &worker, const Request &request) {
     catch (std::runtime_error &e)
     {
         std::cout << e.what() << std::endl;
+		this->statusCode = NOT_FOUND;
+		this->body = "delete failed\n";
     	return ;
     }
 }
